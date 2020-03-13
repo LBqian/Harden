@@ -66,7 +66,7 @@ class Youtube:
 
         frequent_itemsets = apriori(self.df,min_support=0.018,use_colnames=True)	# use_colnames=True表示使用元素名字，默认的False使用列名代表元素
         # frequent_itemsets = apriori(self.df,min_support=0.05)
-        frequent_itemsets.sort_values(by='support',ascending=False,inplace=True)	# 频繁项集可以按支持度排序
+        frequent_itemsets.sort_values(by='support',ascending=False,inplace=True)	# 频繁项集可以按支持度排序的
         print(frequent_itemsets[frequent_itemsets.itemsets.apply(lambda x: len(x)) >= 1])  # 选择长度 >=2 的频繁项集
 
         elapsed = (time.clock() - start)
