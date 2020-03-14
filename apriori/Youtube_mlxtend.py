@@ -13,7 +13,7 @@ from mlxtend.preprocessing import TransactionEncoder	# 传入模型的数据需�
 class Youtube:
     DATASET_youtube_groupmembership = "./release-youtube-groupmembershipsbackup.txt"
     def __init__(self):
-        start = time.clock()
+        start = time.perf_counter()
         print("开始初始化数据集")
         
         self.dataset_youtube_groupmembership = np.loadtxt(self.DATASET_youtube_groupmembership)
@@ -25,12 +25,12 @@ class Youtube:
         self.sampleList=[]
         self.SRNumOfUser = 0
 
-        elapsed = (time.clock() - start)
+        elapsed = (time.perf_counter() - start)
         print("Time used:",elapsed)
         print("数据集已初始化完毕")
         
     def becomedict(self):
-        start = time.clock()
+        start = time.perf_counter()
         print("开始生成字典并取出键值")
          
         for i in range(self.row_groupmembership):
@@ -42,19 +42,19 @@ class Youtube:
         for item in items:
             self.values.append(item[1])
 
-        elapsed = (time.clock() - start)
+        elapsed = (time.perf_counter() - start)
         print("Time used:",elapsed)
         print("字典生成、键值取出")
 
     def sample_dataset(self,SR):
-        start = time.clock()
+        start = time.perf_counter()
         print("开始对数据集进行采样")
         print("采样率为:%.2f" % SR)
 
         self.SRNumOfUser = int(self.NumOfUser * SR)
         self.sampleList = random.sample(self.values,self.SRNumOfUser)
 
-        elapsed = (time.clock() - start)
+        elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
         print("采样完毕")
 
@@ -62,7 +62,7 @@ class Youtube:
         return data.dropna().tolist()'''
 
     def unitfiy(self):
-        start = time.clock()
+        start = time.perf_counter()
         print("开始进一步规约数据集")
 
         shopping_df = pd.DataFrame(self.values)
@@ -74,12 +74,12 @@ class Youtube:
         # df_name = te.inverse_transform(df_tf)		# 将编码值再次转化为原来的商品名
         self.df = pd.DataFrame(df_tf,columns=te.columns_)
 
-        elapsed = (time.clock() - start)
+        elapsed = (time.perf_counter() - start)
         print("Time used:",elapsed)
         print("数据集已进一步规约完毕")
 
     def unitfiy_sample_dataset(self):
-        start = time.clock()
+        start = time.perf_counter()
         print("开始进一步规约样本数据集")
 
         shopping_df = pd.DataFrame(self.sampleList)
@@ -91,13 +91,13 @@ class Youtube:
         # df_name = te.inverse_transform(df_tf)		# 将编码值再次转化为原来的商品名
         self.sample_df = pd.DataFrame(df_tf, columns=te.columns_)
 
-        elapsed = (time.clock() - start)
+        elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
         print("样本数据集已进一步规约完毕")
         
     def getFis(self,threshold,length):
 
-        start = time.clock()
+        start = time.perf_counter()
         print("开始计算频繁项集")
 
         print("数据集阈值为:%.3f" % threshold)
@@ -107,13 +107,13 @@ class Youtube:
         frequent_itemsets.sort_values(by='support',ascending=False,inplace=True)	# 频繁项集可以按支持度排序的
         print(frequent_itemsets[frequent_itemsets.itemsets.apply(lambda x: len(x)) >= length])  # 选择长度 >=2 的频繁项集
 
-        elapsed = (time.clock() - start)
+        elapsed = (time.perf_counter() - start)
         print("Time used:",elapsed)
         print("频繁项集计算完毕")
 
     def getFis_sample_dataset(self,sample_threshold,sample_length):
 
-        start = time.clock()
+        start = time.perf_counter()
         print("开始计算样本频繁项集")
 
         print("样本阈值为:%.3f" %sample_threshold)
@@ -123,13 +123,13 @@ class Youtube:
         frequent_itemsets.sort_values(by='support',ascending=False,inplace=True)	# 频繁项集可以按支持度排序的
         print(frequent_itemsets[frequent_itemsets.itemsets.apply(lambda x: len(x)) >= sample_length])  # 选择长度 >=2 的频繁项集
 
-        elapsed = (time.clock() - start)
+        elapsed = (time.perf_counter() - start)
         print("Time used:",elapsed)
         print("样本频繁项集计算完毕")
 
         
 if __name__ == '__main__':
-    start = time.clock()
+    start = time.perf_counter()
     youtube = Youtube()
     youtube.becomedict()
     youtube.sample_dataset(0.5)
@@ -138,5 +138,5 @@ if __name__ == '__main__':
     youtube.getFis(0.018,1)
     youtube.getFis_sample_dataset(0.018,1)
 
-    elapsed = (time.clock() - start)
+    elapsed = (time.perf_counter() - start)
     print("Time used:",elapsed)
