@@ -26,6 +26,7 @@ class Youtube:
         self.SRNumOfUser = 0
         self.FIsList = []
         self.sample_FIsList=[]
+        print("数据集大小为：", self.NumOfUser)
 
         elapsed = (time.perf_counter() - start)
         print("Time used:",elapsed)
