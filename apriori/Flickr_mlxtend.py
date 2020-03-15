@@ -27,6 +27,8 @@ class Flickr:
         self.values = []
         self.sampleList = []
         self.SRNumOfUser = 0
+        self.FIsList = []
+        self.sample_FIsList = []
 
         elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
@@ -112,6 +114,8 @@ class Flickr:
         # frequent_itemsets = apriori(self.df,min_support=0.05)
         frequent_itemsets.sort_values(by='support', ascending=False, inplace=True)  # 频繁项集可以按支持度排序的
         print(frequent_itemsets[frequent_itemsets.itemsets.apply(lambda x: len(x)) >= length])  # 选择长度 >=2 的频繁项集
+        for item in frequent_itemsets.itemsets:
+            self.FIsList.append(tuple(item))
 
         elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
@@ -127,23 +131,46 @@ class Flickr:
         frequent_itemsets = apriori(self.sample_df, min_support=sample_threshold,
                                     use_colnames=True)  # use_colnames=True表示使用元素名字，默认的False使用列名代表元素
         # frequent_itemsets = apriori(self.df,min_support=0.05)
-        frequent_itemsets.sort_values(by='support', ascending=False, inplace=True)  # 频繁项集可以按支持度排序的
+        frequent_itemsets.sort_values(by='support', ascending=False, inplace=True)  # 样本频繁项集可以按支持度排序的
         print(frequent_itemsets[frequent_itemsets.itemsets.apply(lambda x: len(x)) >= sample_length])  # 选择长度 >=2 的频繁项集
+        for item in frequent_itemsets.itemsets:
+            self.sample_FIsList.append(tuple(item))
 
         elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
         print("样本频繁项集计算完毕")
+
+    def analysis_reault(self):
+        # self.FIsList = [(1,), (2,), (1, 2), (3,), (4, 5)]
+        # self.sample_FIsList = [(6,), (1, 2), (3,), (4, 5)]
+        FNotsample = []
+        sampleNotF = []
+        for num in self.FIsList:
+            if num not in set(self.sample_FIsList):
+                FNotsample.append(num)
+        print('频繁项个数：', len(self.FIsList))
+        print('未找出的频繁项：', FNotsample)
+
+        for num in self.sample_FIsList:
+            if num not in set(self.FIsList):
+                sampleNotF.append(num)
+        print('切片频繁项个数：', len(self.sample_FIsList))
+        print('找错的频繁项：', sampleNotF)
+        precition = (len(self.sample_FIsList) - len(sampleNotF)) / len(self.sample_FIsList)
+        print('准确率为：', precition)
+        recall = (len(self.FIsList) - len(FNotsample)) / len(self.FIsList)
+        print('召回率为：', recall)
 
 
 if __name__ == '__main__':
     start = time.perf_counter()
     flickr = Flickr()
     flickr.becomedict()
-    flickr.sample_dataset(0.5)
+    flickr.sample_dataset(0.2)
     flickr.unitfiy()
     flickr.unitfiy_sample_dataset()
-    flickr.getFis(0.018, 1)
-    flickr.getFis_sample_dataset(0.018, 1)
-
+    flickr.getFis(0.012, 1)
+    flickr.getFis_sample_dataset(0.012, 1)
+    flickr.analysis_reault()
     elapsed = (time.perf_counter() - start)
     print("Time used:", elapsed)
