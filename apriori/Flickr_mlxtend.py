@@ -47,9 +47,9 @@ class Flickr:
                 self.dict_flickr_groupmembership[self.dataset_flickr_groupmembership[i][0]] = [
                     self.dataset_flickr_groupmembership[i][1]]
         items = self.dict_flickr_groupmembership.items()
-        for item in items:
-            self.values.append(item[1])
-
+        #for item in items:
+            #self.values.append(item[1])
+        self.values = [item[1] for item in items ]
         elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
         print("字典生成、键值取出")
@@ -57,7 +57,7 @@ class Flickr:
     def sample_dataset(self, SR):
         start = time.perf_counter()
         print("开始对数据集进行采样")
-        print("采样率为:%.2f" % SR)
+        print("采样率为:%.3f" % SR)
 
         self.SRNumOfUser = int(self.NumOfUser * SR)
         self.sampleList = random.sample(self.values, self.SRNumOfUser)
@@ -115,9 +115,9 @@ class Flickr:
         # frequent_itemsets = apriori(self.df,min_support=0.05)
         frequent_itemsets.sort_values(by='support', ascending=False, inplace=True)  # 频繁项集可以按支持度排序的
         print(frequent_itemsets[frequent_itemsets.itemsets.apply(lambda x: len(x)) >= length])  # 选择长度 >=2 的频繁项集
-        for item in frequent_itemsets.itemsets:
-            self.FIsList.append(tuple(item))
-
+        #for item in frequent_itemsets.itemsets:
+            #self.FIsList.append(tuple(item))
+        self.FIsList =[tuple(item) for item in frequent_itemsets.itemsets]
         elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
         print("频繁项集计算完毕")
@@ -134,27 +134,33 @@ class Flickr:
         # frequent_itemsets = apriori(self.df,min_support=0.05)
         frequent_itemsets.sort_values(by='support', ascending=False, inplace=True)  # 样本频繁项集可以按支持度排序的
         print(frequent_itemsets[frequent_itemsets.itemsets.apply(lambda x: len(x)) >= sample_length])  # 选择长度 >=2 的频繁项集
-        for item in frequent_itemsets.itemsets:
-            self.sample_FIsList.append(tuple(item))
+        #for item in frequent_itemsets.itemsets:
+            #self.sample_FIsList.append(tuple(item))
+        self.sample_FIsList=[tuple(item) for item in frequent_itemsets.itemsets]
 
         elapsed = (time.perf_counter() - start)
         print("Time used:", elapsed)
         print("样本频繁项集计算完毕")
 
     def analysis_reault(self):
-        # self.FIsList = [(1,), (2,), (1, 2), (3,), (4, 5)]
-        # self.sample_FIsList = [(6,), (1, 2), (3,), (4, 5)]
+        start = time.perf_counter()
+        print("开始分析实验结果")
+
+        #self.FIsList = [(1,), (2,), (1, 2), (3,), (4, 5)]
+        #self.sample_FIsList = [(6,), (1, 2), (3,), (4, 5)]
         FNotsample = []
         sampleNotF = []
-        for num in self.FIsList:
+        '''for num in self.FIsList:
             if num not in set(self.sample_FIsList):
-                FNotsample.append(num)
+                FNotsample.append(num)'''
+        FNotsample = [num for num in self.FIsList if num not in set(self.sample_FIsList)]
         print('频繁项个数：', len(self.FIsList))
         print('未找出的频繁项：', FNotsample)
 
-        for num in self.sample_FIsList:
+        '''for num in self.sample_FIsList:
             if num not in set(self.FIsList):
-                sampleNotF.append(num)
+                sampleNotF.append(num)'''
+        sampleNotF = [num for num in self.sample_FIsList if num not in set(self.FIsList)]
         print('切片频繁项个数：', len(self.sample_FIsList))
         print('找错的频繁项：', sampleNotF)
         precition = (len(self.sample_FIsList) - len(sampleNotF)) / len(self.sample_FIsList)
@@ -162,16 +168,20 @@ class Flickr:
         recall = (len(self.FIsList) - len(FNotsample)) / len(self.FIsList)
         print('召回率为：', recall)
 
+        elapsed = (time.perf_counter() - start)
+        print("Time used:", elapsed)
+        print("实验结果分析完毕")
+
 
 if __name__ == '__main__':
     start = time.perf_counter()
     flickr = Flickr()
     flickr.becomedict()
-    flickr.sample_dataset(0.2)
+    flickr.sample_dataset(0.03)
     flickr.unitfiy()
     flickr.unitfiy_sample_dataset()
-    flickr.getFis(0.012, 1)
-    flickr.getFis_sample_dataset(0.012, 1)
+    flickr.getFis(0.025, 1)
+    flickr.getFis_sample_dataset(0.025, 1)
     flickr.analysis_reault()
     elapsed = (time.perf_counter() - start)
     print("Time used:", elapsed)
