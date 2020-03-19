@@ -12,18 +12,18 @@ from mlxtend.frequent_patterns import apriori
 from mlxtend.preprocessing import TransactionEncoder  # 传入模型的数据需要满足特定的格式，可以用这种方法来转换为bool值，也可以用函数转换为0、1
 
 
-class Flickr:
-    DATASET_flickr_groupmembership = "./release-flickr-groupmembershipsbackup.txt"
+class Livejournal:
+    DATASET_livejournal_groupmembership = "./release-livejournal-groupmembershipsbackup.txt"
 
     def __init__(self):
         start = time.perf_counter()
         print("开始初始化数据集")
 
-        self.dataset_flickr_groupmembership = np.loadtxt(self.DATASET_flickr_groupmembership)
-        [self.row_groupmembership, self.col_groupmembership] = self.dataset_flickr_groupmembership.shape
-        self.User = np.unique(self.dataset_flickr_groupmembership[:, 0])
+        self.dataset_livejournal_groupmembership = np.loadtxt(self.DATASET_livejournal_groupmembership)
+        [self.row_groupmembership, self.col_groupmembership] = self.dataset_livejournal_groupmembership.shape
+        self.User = np.unique(self.dataset_livejournal_groupmembership[:, 0])
         self.NumOfUser = len(self.User)
-        self.dict_flickr_groupmembership = {}
+        self.dict_livejournal_groupmembership = {}
         self.values = []
         self.sampleList = []
         self.SRNumOfUser = 0
@@ -40,13 +40,13 @@ class Flickr:
         print("开始生成字典并取出键值")
 
         for i in range(self.row_groupmembership):
-            if self.dataset_flickr_groupmembership[i][0] in self.dict_flickr_groupmembership:
-                self.dict_flickr_groupmembership[self.dataset_flickr_groupmembership[i][0]].append(
-                    self.dataset_flickr_groupmembership[i][1])
+            if self.dataset_livejournal_groupmembership[i][0] in self.dict_livejournal_groupmembership:
+                self.dict_livejournal_groupmembership[self.dataset_livejournal_groupmembership[i][0]].append(
+                    self.dataset_livejournal_groupmembership[i][1])
             else:
-                self.dict_flickr_groupmembership[self.dataset_flickr_groupmembership[i][0]] = [
-                    self.dataset_flickr_groupmembership[i][1]]
-        items = self.dict_flickr_groupmembership.items()
+                self.dict_livejournal_groupmembership[self.dataset_livejournal_groupmembership[i][0]] = [
+                    self.dataset_livejournal_groupmembership[i][1]]
+        items = self.dict_livejournal_groupmembership.items()
         #for item in items:
             #self.values.append(item[1])
         self.values = [item[1] for item in items ]
@@ -175,13 +175,13 @@ class Flickr:
 
 if __name__ == '__main__':
     start = time.perf_counter()
-    flickr = Flickr()
-    flickr.becomedict()
-    flickr.sample_dataset(0.03)
-    flickr.unitfiy()
-    flickr.unitfiy_sample_dataset()
-    flickr.getFis(0.025, 1)
-    flickr.getFis_sample_dataset(0.025, 1)
-    flickr.analysis_reault()
+    livejournal = Livejournal()
+    livejournal.becomedict()
+    livejournal.sample_dataset(0.1)
+    #livejournal.unitfiy()
+    livejournal.unitfiy_sample_dataset()
+    #livejournal.getFis(0.025, 1)
+    livejournal.getFis_sample_dataset(0.035, 1)
+    #livejournal.analysis_reault()
     elapsed = (time.perf_counter() - start)
-    print("Time used:", elapsed)
+    print("Apriori Time used:", elapsed)
